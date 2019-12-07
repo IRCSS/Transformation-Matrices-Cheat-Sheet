@@ -1,24 +1,47 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class Matrices : MonoBehaviour {
+
+
+    public Dictionary<MatricesType, string> mToUI = new Dictionary<MatricesType, string>()
+    {
+        {MatricesType.Identity,                    "Identity" },
+        {MatricesType.ScaleUniform,                "Uniform Scale" },
+        {MatricesType.ScaleAxis,                   "Axis Scale" },
+        {MatricesType.Mirror,                      "Mirror in X" },
+        {MatricesType.NormalBasis,                 "Nomalized Basis" },
+        {MatricesType.OrthogonalBasis,             "Orthogonal Basis" },
+        {MatricesType.OrthogonalMatrix,            "Orthogonal Matrix" },
+        {MatricesType.Rotation,                    "Rotation around X" },
+        {MatricesType.Translation,                 "Translation, homogeneous c. " }
+
+    };
 
     public enum MatricesType
     {
         Identity, ScaleUniform, ScaleAxis, Mirror,
         NormalBasis, OrthogonalBasis, OrthogonalMatrix,
         Rotation, Translation, 
-        projection
+        
 
     };
     
     public MatricesType matrixType;
+    public bool         setAutomatic = true;
+    public Text         m_text;
+    public bool         animate      = true;
+           float        timer;
 
-    
-	
-	// Update is called once per frame
-	void Update () {
+    private void Start()
+    {
+        m_text.text = "Matrix: " + mToUI[matrixType];
+    }
+    // Update is called once per frame
+    void Update () {
 
         Matrix4x4 objectToWorld = Matrix4x4.identity;
 
@@ -39,10 +62,10 @@ public class Matrices : MonoBehaviour {
 
                  objectToWorld = CreateMatrix(
 
-                    2f, 0f, 0f, 0f,
-                    0f, 2f, 0f, 0f,
-                    0f, 0f, 2f, 0f,
-                    0f, 0f, 0f, 1f
+                    0.5f,    0f,    0f,   0f,
+                      0f,  0.5f,    0f,   0f,
+                      0f,    0f,  0.5f,   0f,
+                      0f,    0f,    0f,   1f
                 );
 
                 break;
@@ -139,34 +162,44 @@ public class Matrices : MonoBehaviour {
                 );
                 break;
 
-            case MatricesType.projection:
-
-                float fov = 90;
-                float s   = 1f /                 Mathf.Tan(fov * Mathf.PI 
-                                                           /(2f * 180f));
-                float f =  3f;
-                float n = 0.1f;
-
-
-                objectToWorld = CreateMatrix(
-
-                    s,  0f,       0f,         1f,
-                    0f,  s,       0f,         0f,
-                    0f, 0f, -f/(f-n), -f*n/(f-n),
-                    0f, 0f,      -1f,         0f
-                );
-                break;
         }
 
 
-        float v = Mathf.Sin(Time.time) * 0.5f + 0.5f;
+        timer = timer + Time.deltaTime;
+        if (timer  >= 2f*Mathf.PI)
+        {
+            timer = 0;
+            if (setAutomatic)
+            {
+                CallNextMatrix();
 
+            }
+        }
+
+        
+        float v = Mathf.Sin(timer + 3f*Mathf.PI/2f) * 0.5f + 0.5f;
+        if (!animate) v = 1;
         Matrix4x4 toSet = lerpMatrices(Matrix4x4.identity, objectToWorld, v);
 
         Shader.SetGlobalMatrix("myTransformation", toSet);
 
+        if (Input.GetKeyDown(KeyCode.N)) CallNextMatrix();
+
 
 	}
+
+    void CallNextMatrix()
+    {
+        int current = (int)matrixType;
+        current++;
+        if(current >= System.Enum.GetNames(typeof(MatricesType)).Length)
+            current = 0;
+
+        matrixType = (MatricesType)current;
+
+        m_text.text = "Matrix: " + mToUI[matrixType];
+        return;
+    }
 
     Matrix4x4 lerpMatrices(Matrix4x4 one, Matrix4x4 two, float value)
     {

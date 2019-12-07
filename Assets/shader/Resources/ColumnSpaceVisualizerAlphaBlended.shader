@@ -43,10 +43,11 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				float4 transferedPos = mul(unity_ObjectToWorld,  v.vertex);
-				       transferedPos = mul(myTransformation,     transferedPos);
-				       o.vertex      = mul(UNITY_MATRIX_VP, transferedPos);
-				       o.uv          = TRANSFORM_TEX(v.uv, _MainTex);
+		
+				float4 transferedPos      = mul(unity_ObjectToWorld, v.vertex);
+				       transferedPos      = mul(myTransformation, transferedPos);
+				       o.vertex           = mul(UNITY_MATRIX_VP, transferedPos);
+				       o.uv               = TRANSFORM_TEX(v.uv, _MainTex);
 				return o;
 			}
 			

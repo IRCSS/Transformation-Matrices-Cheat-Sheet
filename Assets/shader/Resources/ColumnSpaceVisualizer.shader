@@ -9,7 +9,7 @@
 	{
 		Tags { "RenderType"="Opaque" }
 		LOD 100
-
+		Cull Off
 		Pass
 		{
 			CGPROGRAM
@@ -41,9 +41,8 @@
 		
 				float4 transferedPos      = mul(unity_ObjectToWorld, v.vertex);
 				       transferedPos      = mul(myTransformation, transferedPos);
-					   transferedPos.xyz /= transferedPos.w;
-				       o.vertex      = mul(UNITY_MATRIX_VP, transferedPos);
-				       o.uv          = TRANSFORM_TEX(v.uv, _MainTex);
+				       o.vertex           = mul(UNITY_MATRIX_VP, transferedPos);
+				       o.uv               = TRANSFORM_TEX(v.uv, _MainTex);
 				return o;
 			}
 			
