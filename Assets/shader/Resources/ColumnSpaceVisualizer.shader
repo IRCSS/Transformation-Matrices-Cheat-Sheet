@@ -33,12 +33,17 @@
 			sampler2D _MainTex;
 			float4    _MainTex_ST;
 			float4    _Color;
+			uniform float4x4  myTransformation;
 			
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+		
+				float4 transferedPos      = mul(unity_ObjectToWorld, v.vertex);
+				       transferedPos      = mul(myTransformation, transferedPos);
+					   transferedPos.xyz /= transferedPos.w;
+				       o.vertex      = mul(UNITY_MATRIX_VP, transferedPos);
+				       o.uv          = TRANSFORM_TEX(v.uv, _MainTex);
 				return o;
 			}
 			

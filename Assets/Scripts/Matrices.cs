@@ -82,16 +82,14 @@ public class Matrices : MonoBehaviour {
 
             case MatricesType.OrthogonalBasis:
 
-                // columnOne   = new Vector3( 1f,  1f,  2f);
-                // columnTwo   = new Vector3( 1f,  1f, -1f);
-                // columnThree = new Vector3(-3f, -3f,  0f);
+                
 
                 objectToWorld = CreateMatrix(
                 
-                    1f,  1f, -3f, 0f,
-                    1f,  1f, -3f, 0f,
-                    2f, -1f,  0f, 0f,
-                    0f,  0f,  0f, 1f
+                    1f,   1f,   1f, 0f,
+                   -1f,   1f,   1f, 0f,
+                    0f,  -2f,   1f, 0f,
+                    0f,   0f,   0f, 1f
                 );
                 break;
 
@@ -101,16 +99,16 @@ public class Matrices : MonoBehaviour {
                 // columnTwo   = new Vector3( 1f,  1f, -1f) / sqrt(3);
                 // columnThree = new Vector3(-3f, -3f,  0f) / sqrt(6);
 
-                float n1 = 2f;
-                float n2 = Mathf.Sqrt(3f);
-                float n3 = Mathf.Sqrt(6f);
+                float n1 = Mathf.Sqrt(2f);
+                float n2 = Mathf.Sqrt(6f);
+                float n3 = Mathf.Sqrt(3f);
 
                 objectToWorld = CreateMatrix(
-
-                    1f/n1,  1f/n2, -3f/n3, 0f,
-                    1f/n1,  1f/n2, -3f/n3, 0f,
-                    2f/n1, -1f/n2,     0f, 0f,
-                       0f,     0f,     0f, 1f
+                
+                    1f/n1,   1f/n2,   1f/n3, 0f,
+                   -1f/n1,   1f/n2,   1f/n3, 0f,
+                    0f,     -2f/n2,   1f/n3, 0f,
+                    0f,         0f,      0f, 1f
                 );
                 break;
 
@@ -134,7 +132,7 @@ public class Matrices : MonoBehaviour {
 
                 objectToWorld = CreateMatrix(
 
-                    1f, 0f, 0f, 1f,
+                    1f, 0f, 0f, 6f,
                     0f, 1f, 0f, 0f,
                     0f, 0f, 1f, 0f,
                     0f, 0f, 0f, 1f
@@ -143,10 +141,10 @@ public class Matrices : MonoBehaviour {
 
             case MatricesType.projection:
 
-                float fov = 60;
-                float s   = 1f / Mathf.Tan(fov * Mathf.PI 
-                                           /(2f * 180f));
-                float f =  10f;
+                float fov = 90;
+                float s   = 1f /                 Mathf.Tan(fov * Mathf.PI 
+                                                           /(2f * 180f));
+                float f =  3f;
                 float n = 0.1f;
 
 
@@ -162,7 +160,10 @@ public class Matrices : MonoBehaviour {
 
 
         float v = Mathf.Sin(Time.time) * 0.5f + 0.5f;
-        Shader.SetGlobalMatrix("_TestMatrix", lerpMatrices( Matrix4x4.identity, objectToWorld, v));
+
+        Matrix4x4 toSet = lerpMatrices(Matrix4x4.identity, objectToWorld, v);
+
+        Shader.SetGlobalMatrix("myTransformation", toSet);
 
 
 	}
@@ -171,10 +172,11 @@ public class Matrices : MonoBehaviour {
     {
         value = Mathf.Clamp01(value);
 
-        Vector3 c1 = Vector3.Lerp( one.GetColumn(0), two.GetColumn(0), value);
-        Vector3 c2 = Vector3.Lerp( one.GetColumn(1), two.GetColumn(1), value);
-        Vector3 c3 = Vector3.Lerp( one.GetColumn(2), two.GetColumn(2), value);
-        Vector3 c4 = Vector3.Lerp( one.GetColumn(3), two.GetColumn(3), value);
+
+        Vector4 c1 = Vector4.Lerp( one.GetColumn(0), two.GetColumn(0), value);
+        Vector4 c2 = Vector4.Lerp( one.GetColumn(1), two.GetColumn(1), value);
+        Vector4 c3 = Vector4.Lerp( one.GetColumn(2), two.GetColumn(2), value);
+        Vector4 c4 = Vector4.Lerp( one.GetColumn(3), two.GetColumn(3), value);
 
         return new Matrix4x4(c1, c2, c3, c4);
 
