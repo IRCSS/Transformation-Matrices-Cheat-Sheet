@@ -17,7 +17,8 @@ public class Matrices : MonoBehaviour {
         {MatricesType.OrthogonalBasis,             "Orthogonal Basis" },
         {MatricesType.OrthogonalMatrix,            "Orthogonal Matrix" },
         {MatricesType.Rotation,                    "Rotation around X" },
-        {MatricesType.Translation,                 "Translation, homogeneous c. " }
+        {MatricesType.Translation,                 "Translation, homogeneous c. " },
+        {MatricesType.Projection,                  "Projection on a Plane"}
 
     };
 
@@ -25,7 +26,7 @@ public class Matrices : MonoBehaviour {
     {
         Identity, ScaleUniform, ScaleAxis, Mirror,
         NormalBasis, OrthogonalBasis, OrthogonalMatrix,
-        Rotation, Translation, 
+        Rotation, Translation, Projection 
         
 
     };
@@ -160,6 +161,39 @@ public class Matrices : MonoBehaviour {
                     0f, 0f, 1f, 0f,
                     0f, 0f, 0f, 1f
                 );
+                break;
+            case MatricesType.Projection:
+
+                //Projection on a plane. Visualizing perspective projection is too hard, I gave up
+                //Basis for the plane 
+                // bx = (0., .8, 0.6)
+                // by = (1., 0., 0.)
+                // Projection a plane is A*Inverse(Atranspose*A)*Atranspose
+                // Since the basis of this matrix are normalized, ATranspose*A is the 2x2 Identity matrix, 
+                // This means the term reduces to P = A * ATranspose, this is a symetric matrix which is easiy to calculate per hand
+
+                // For more intersting visualse I will be rotation the plane then by 45 degrees, 
+
+
+                float t = 125f;
+
+                Matrix4x4 rotateM = CreateMatrix(
+
+                   Mathf.Cos(t),      0f,    Mathf.Sin(t),   0f,
+                             0f,      1f,              0f,   0f,
+                  -Mathf.Sin(t),      0f,    Mathf.Cos(t),   0f,
+                             0f,      0f,              0f,   1f
+                );
+
+                objectToWorld = CreateMatrix(
+
+                    1f,     0f,     0f, 5f,
+                    0f,  0.64f, -0.48f, 0f,
+                    0f, -0.48f,  0.36f, 7f,
+                    0f,     0f,     0f, 1f
+                );
+
+                objectToWorld = rotateM *objectToWorld;
                 break;
 
         }

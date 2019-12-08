@@ -1071,10 +1071,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c6469eff8467184e9764264da11e399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  matrixType: 0
-  setAutomatic: 1
+  matrixType: 9
+  setAutomatic: 0
   m_text: {fileID: 1564693880}
-  animate: 1
+  animate: 0
 --- !u!4 &1981747888
 Transform:
   m_ObjectHideFlags: 0
